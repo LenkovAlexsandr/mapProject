@@ -12,14 +12,14 @@ SCREEN_SIZE = [850, 500]
 class Example(QWidget):
     def __init__(self):
         super().__init__()
-        self.zoom = 17
-        self.address = '44.269772,46.307847'
+        self.zoom = 5
+        self.address = [44.269772, 46.307847]
         self.get_image()
         self.initUI()
 
     def get_image(self):
         map_params = {
-            "ll": self.address,
+            "ll": ','.join(list(map(str, self.address))),
             "z": self.zoom,
             "l": "map",
         }
@@ -34,6 +34,22 @@ class Example(QWidget):
             self.zoom += 1 if self.zoom < 17 else 0
         elif event.key() == QtCore.Qt.Key_PageDown:
             self.zoom -= 1 if self.zoom > 1 else 0
+        elif event.key() == QtCore.Qt.Key_Left:
+            self.address[0] -= (0.0025 * 2 ** (17 - self.zoom)) / 2
+        elif event.key() == QtCore.Qt.Key_Up:
+            self.address[1] += (0.0025 * 2 ** (17 - self.zoom)) / 2
+        elif event.key() == QtCore.Qt.Key_Right:
+            self.address[0] += (0.0025 * 2 ** (17 - self.zoom)) / 2
+        elif event.key() == QtCore.Qt.Key_Down:
+            self.address[1] -= (0.0025 * 2 ** (17 - self.zoom)) / 2
+        if self.address[0] > 180:
+            self.address[0] = -360 + self.address[0]
+        elif self.address[0] < -180:
+            self.address[0] = 360 + self.address[0]
+        if self.address[1] > 85:
+            self.address[1] = -170 + self.address[1]
+        elif self.address[1] < -85:
+            self.address[1] = 170 + self.address[1]
         self.get_image()
         self.image.setPixmap(QPixmap(self.map_file))
 
