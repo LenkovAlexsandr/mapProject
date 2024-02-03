@@ -12,7 +12,9 @@ SCREEN_SIZE = [850, 500]
 class Example(QWidget):
     def __init__(self):
         super().__init__()
-        self.zoom = 5
+        self.zoom = 15
+        self.mod = ['map', 'sat', 'sat,skl']
+        self.option = 0
         self.address = [44.269772, 46.307847]
         self.get_image()
         self.initUI()
@@ -21,7 +23,7 @@ class Example(QWidget):
         map_params = {
             "ll": ','.join(list(map(str, self.address))),
             "z": self.zoom,
-            "l": "map",
+            "l": self.mod[self.option]
         }
         map_api_server = "http://static-maps.yandex.ru/1.x/"
         response = requests.get(map_api_server, params=map_params)
@@ -31,7 +33,7 @@ class Example(QWidget):
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_PageUp:
-            self.zoom += 1 if self.zoom < 17 else 0
+            self.zoom += 1 if self.zoom < 19 else 0
         elif event.key() == QtCore.Qt.Key_PageDown:
             self.zoom -= 1 if self.zoom > 1 else 0
         elif event.key() == QtCore.Qt.Key_Left:
@@ -42,6 +44,8 @@ class Example(QWidget):
             self.address[0] += (0.0025 * 2 ** (17 - self.zoom)) / 2
         elif event.key() == QtCore.Qt.Key_Down:
             self.address[1] -= (0.0025 * 2 ** (17 - self.zoom)) / 2
+        if event.key() == QtCore.Qt.Key_Space:
+            self.option = (self.option + 1) % 3
         if self.address[0] > 180:
             self.address[0] = -360 + self.address[0]
         elif self.address[0] < -180:
@@ -57,7 +61,7 @@ class Example(QWidget):
         self.setGeometry(100, 100, *SCREEN_SIZE)
         self.setWindowTitle('Отображение карты')
 
-        ## Изображение
+        # Изображение
         self.image = QLabel(self)
         self.image.resize(600, 450)
         self.image.setPixmap(QPixmap(self.map_file))
