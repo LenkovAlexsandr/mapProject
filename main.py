@@ -9,15 +9,6 @@ from functions_geocode import get_toponym, get_coordinates
 SCREEN_SIZE = [850, 500]
 
 
-class NoteText(QLineEdit):
-    def __init__(self, parent):
-        super(NoteText, self).__init__(parent)
-
-    def keyPressEvent(self, event):
-        print(12)
-        #self.QLineEdit.keyPressEvent(self, event)
-
-
 class Example(QWidget):
     def __init__(self):
         super().__init__()
@@ -53,7 +44,6 @@ class Example(QWidget):
             self.image.setPixmap(QPixmap(self.map_file))
 
     def keyPressEvent(self, event):
-        print(event)
         if event.key() == QtCore.Qt.Key_PageUp:
             self.zoom += 1 if self.zoom < 19 else 0
         elif event.key() == QtCore.Qt.Key_PageDown:
@@ -88,7 +78,7 @@ class Example(QWidget):
         self.image.resize(600, 450)
         self.image.setPixmap(QPixmap(self.map_file))
 
-        self.search_value = NoteText(self)
+        self.search_value = QLineEdit(self)
         self.search_value.move(605, 10)
         self.search_value.resize(240, 25)
 
